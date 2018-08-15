@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -59,12 +60,15 @@ public class GenerateRestApiController {
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
-	public HttpEntity<Resources<Resource<RestAPI>>> searchAllRestApis() {
+	public HttpEntity<Resources<Resource<RestAPI>>> searchAllRestApis(
+			@RequestParam(value = "filters", required = false) String filters,
+			@RequestParam(value = "page", required = false) Integer page,
+			@RequestParam(value = "size", required = false) Integer size) {
 		List<Link> links = new ArrayList<Link>();
 		List<Link> items = new ArrayList<Link>();
 
 		List<RestAPI> restAPIList = new ArrayList<>();
-		restAPIList = generateRestApiService.searchRestApiData();
+		restAPIList = generateRestApiService.searchRestApiData(size, page, filters);
 		if (restAPIList == null || restAPIList.isEmpty()) {
 			return new ResponseEntity<Resources<Resource<RestAPI>>>(HttpStatus.NO_CONTENT);
 		}
